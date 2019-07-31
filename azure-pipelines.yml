@@ -1,0 +1,54 @@
+# https://dev.azure.com/home-assistant
+
+trigger:
+  - master
+schedules:
+- cron: "0 18 * * Mon"
+  displayName: Weekly build
+  branches:
+    include:
+    - master
+  always: true
+variables:
+  - name: versionHadolint
+    value: 'v1.16.3'
+  - group: docker
+
+stages:
+
+- stage: 'Validate'
+  jobs:
+  - job: 'Hadolint'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: sudo docker pull hadolint/hadolint:$(versionHadolint)
+      displayName: 'Install Hadolint'
+    - script: |
+        sudo docker run --rm -i \
+          -v $(pwd)/.hadolint.yaml:/.hadolint.yaml:ro \
+          hadolint/hadolint:$(versionHadolint) < Dockerfile
+      displayName: 'Run Hadolint'
+
+- stage: 'Deploy'
+  jobs:
+  - job: 'CI_Azure'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      matrix:
+        Python36:
+          pythonVersion: '3.6'
+        Python37:
+          pythonVersion: '3.7'
+    steps:
+    - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
+      displayName: 'Docker hub login'
+    - script: |
+        set -e
+
+        sudo docker build \
+          --build-arg PYTHON_VERSION=$(pythonVersion) \
+          --tag homeassistant/ci-azure:$(pythonVersion) .
+
+        sudo docker push homeassistant/ci-azure:$(pythonVersion)
