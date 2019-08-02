@@ -1,0 +1,59 @@
+# https://dev.azure.com/home-assistant
+
+parameters:
+  buildArch: ''
+  buildVersion: ''
+  buildApk: ''
+  buildRequirement: ''
+  buildRequirementDiff: ''
+  preBuild: []
+
+
+jobs:
+- job: 'Wheels'
+  timeoutInMinutes: 360
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      amd64:
+        buildArch: 'amd64'
+      i386:
+        buildArch: 'i386'
+      armhf:
+        buildArch: 'armhf'
+      armv7:
+        buildArch: 'armv7'
+      aarch64:
+        buildArch: 'aarch64'
+  steps:
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y --no-install-recommends \
+        qemu-user-static \
+        binfmt-support \
+        curl
+      sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+      sudo update-binfmts --enable qemu-arm
+      sudo update-binfmts --enable qemu-aarch64
+    displayName: 'Initial cross build'
+  - script: |
+      mkdir -p .ssh
+      echo -e "-----BEGIN RSA PRIVATE KEY-----\n$(wheelsSSH)\n-----END RSA PRIVATE KEY-----" >> .ssh/id_rsa
+      ssh-keyscan -H $(wheelsHost) >> .ssh/known_hosts
+      chmod 600 .ssh/*
+    displayName: 'Install ssh key'
+  - script: |
+      sudo docker pull homeassistant/${{ parameters.buildArch }}-wheels:${{ parameters.buildVersion }}
+    displayName: 'Install wheels builder'
+  - ${{ parameters.preBuild }}
+  - script: |
+      sudo docker run --rm -v $(pwd):/data:ro -v $(pwd)/.ssh:/root/.ssh:rw \
+        homeassistant/${{ parameters.buildArch }}-wheels:${{ parameters.buildVersion }} \
+        --apk "${{ parameters.buildApk }}" \
+        --index $(wheelsIndex) \
+        --requirement requirements_wheels.txt \
+        --requirement-diff requirements_diff.txt \
+        --upload rsync \
+        --remote wheels@$(wheelsHost):/opt/wheels
+    displayName: 'Run wheels build'
