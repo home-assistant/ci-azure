@@ -33,6 +33,7 @@ stages:
 - stage: 'Deploy'
   jobs:
   - job: 'CI_Azure'
+    condition: eq(variables['Build.SourceBranchName'], 'master')
     pool:
       vmImage: 'ubuntu-latest'
     strategy:
