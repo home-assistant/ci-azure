@@ -1,0 +1,34 @@
+# https://dev.azure.com/home-assistant
+
+parameters:
+  pythonVersion: ''
+  artifactFeed: '2df3ae11-3bf6-49bc-a809-ba0d340d6a6d'
+  build: []
+
+steps:
+- script: |
+    python --version > .cache
+  displayName: 'Set python $ for requirement cache'
+- task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+  displayName: 'Restore artifacts based on Requirements'
+  inputs:
+    keyfile: 'requirements_test_all.txt, .cache, homeassistant/package_constraints.txt'
+    targetfolder: './venv'
+    vstsFeed: '$(ArtifactFeed)'
+- script: |
+    ${{ parameters.build }}
+  displayName: 'Create Virtual Environment & Install Requirements'
+  condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
+# Explicit Cache Save (instead of using RestoreAndSaveCache)
+# Dont wait with cache save for all the other task in this job to complete (±30 minutes), other parallel jobs might utilize this
+- task: 1ESLighthouseEng.PipelineArtifactCaching.SaveCacheV1.SaveCache@1
+  displayName: 'Save artifacts based on Requirements'
+  inputs:
+    keyfile: 'requirements_test_all.txt, .cache, homeassistant/package_constraints.txt'
+    targetfolder: './venv'
+    vstsFeed: '$(ArtifactFeed)'
+- script: |
+    . venv/bin/activate
+
+    pip install -e .
+  displayName: 'Install Home Assistant for python $(python.container)'
