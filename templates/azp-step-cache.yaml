@@ -14,7 +14,7 @@ steps:
   inputs:
     keyfile: 'requirements_test_all.txt, .cache, homeassistant/package_constraints.txt'
     targetfolder: './venv'
-    vstsFeed: '$(ArtifactFeed)'
+    vstsFeed: '${{ parameters.artifactFeed }}'
 - script: |
     ${{ parameters.build }}
   displayName: 'Create Virtual Environment & Install Requirements'
@@ -26,7 +26,7 @@ steps:
   inputs:
     keyfile: 'requirements_test_all.txt, .cache, homeassistant/package_constraints.txt'
     targetfolder: './venv'
-    vstsFeed: '$(ArtifactFeed)'
+    vstsFeed: '${{ parameters.artifactFeed }}'
 - script: |
     . venv/bin/activate
 
