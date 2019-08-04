@@ -53,19 +53,19 @@ jobs:
   - script: |
       build_args=()
 
-      if [ -f "${{ parameters.wheelsRequirement}}" ]; then
-        build_args+=(--requirement "${{ parameters.wheelsRequirement}}")
+      if [ -f "${{ parameters.wheelsRequirement }}" ]; then
+        build_args+=(--requirement "${{ parameters.wheelsRequirement }}")
       fi
 
-      if [ -f "${{ parameters.wheelsRequirementDiff}}" ]; then
-        build_args+=(--requirement-diff "${{ parameters.wheelsRequirementDiff}}")
+      if [ -f "${{ parameters.wheelsRequirementDiff }}" ]; then
+        build_args+=(--requirement-diff "${{ parameters.wheelsRequirementDiff }}")
       fi
 
-      if [ "${{ parameters.wheelsSingle}}" == "true" ]; then
+      if [ "${{ parameters.wheelsSingle }}" == "true" ]; then
         build_args+=(--single)
       fi
 
-      if [ "${{ parameters.wheelsLocal}}" == "true" ]; then
+      if [ "${{ parameters.wheelsLocal }}" == "true" ]; then
         build_args+=(--local)
       fi
 
