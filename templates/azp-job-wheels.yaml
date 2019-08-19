@@ -22,7 +22,8 @@ jobs:
   strategy:
     matrix:
       ${{ each arch in parameters.builderArch }}:
-        buildArch: ${{ arch }}
+        ${{ arch }}:
+          buildArch: ${{ arch }}
   steps:
   - script: |
       sudo apt-get update
