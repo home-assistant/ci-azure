@@ -3,8 +3,10 @@
 parameters:
   builderVersion: ''
   builderApk: ''
+  builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
   wheelsRequirement: ''
   wheelsRequirementDiff: ''
+  wheelsPrebuildDir: ''
   wheelsSingle: false
   wheelsLocal: false
   preBuild: []
@@ -19,16 +21,8 @@ jobs:
   - group: wheels
   strategy:
     matrix:
-      amd64:
-        buildArch: 'amd64'
-      i386:
-        buildArch: 'i386'
-      armhf:
-        buildArch: 'armhf'
-      armv7:
-        buildArch: 'armv7'
-      aarch64:
-        buildArch: 'aarch64'
+      ${{ each arch in parameters.builderArch }}:
+        buildArch: ${{ arch }}
   steps:
   - script: |
       sudo apt-get update
@@ -60,6 +54,10 @@ jobs:
 
       if [ -f "${{ parameters.wheelsRequirementDiff }}" ]; then
         build_args+=(--requirement-diff "${{ parameters.wheelsRequirementDiff }}")
+      fi
+
+      if [ -d "${{ parameters.wheelsPrebuildDir }}" ]; then
+        build_args+=(--prebuild-dir "${{ parameters.wheelsPrebuildDir }}")
       fi
 
       if [ "${{ parameters.wheelsSingle }}" == "true" ]; then
