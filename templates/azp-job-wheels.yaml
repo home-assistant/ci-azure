@@ -10,13 +10,14 @@ parameters:
   wheelsSingle: false
   wheelsLocal: false
   preBuild: []
+  buildPool:
+    vmImage: 'ubuntu-latest'
 
 
 jobs:
 - job: 'Wheels'
   timeoutInMinutes: 360
-  pool:
-    vmImage: 'ubuntu-latest'
+  pool: ${{ parameters.buildPool }}
   variables:
   - group: wheels
   strategy:
