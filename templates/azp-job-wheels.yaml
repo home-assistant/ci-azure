@@ -10,10 +10,11 @@ parameters:
   wheelsSingle: false
   wheelsLocal: false
   preBuild: []
+  jobName: 'Wheels'
 
 
 jobs:
-- job: 'Wheels'
+- job: '${{ parameters.jobName }}'
   timeoutInMinutes: 360
   pool:
     vmImage: 'ubuntu-latest'
