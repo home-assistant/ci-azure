@@ -15,6 +15,7 @@ steps:
     branch_version="$(Build.SourceBranchName)"
 
     if [ "${branch_version}" == "dev" ]; then
+      pip install setuptools
       ./script/version_bump.py nightly
     fi
 
