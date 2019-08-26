@@ -1,0 +1,22 @@
+# https://dev.azure.com/home-assistant
+
+parameters:
+  pythonVersion: '3.7'
+
+
+steps:
+- task: UsePythonVersion@0
+  displayName: 'Use Python ${{ parameters.pythonVersion }}'
+  inputs:
+    versionSpec: '${{ parameters.pythonVersion }}'
+- script: |
+    set -e
+
+    branch_version="$(Build.SourceBranchName)"
+
+    if [ "${branch_version}" == "dev" ]; then
+      ./script/version_bump.py nightly
+    fi
+
+    echo '##vso[task.setvariable variable=homeassistantRelease]$(python setup.py -V)'
+  displayName: 'Check version & Bump on nightly'
