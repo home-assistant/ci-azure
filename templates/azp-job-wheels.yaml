@@ -75,6 +75,7 @@ jobs:
       sudo docker run --rm -v $(pwd):/data:ro -v $(pwd)/.ssh:/root/.ssh:rw \
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
         --apk "${{ parameters.builderApk }}" \
+        --pip "${{ parameters.builderPip }}" \
         --index $(wheelsIndex) \
         --upload rsync \
         --remote wheels@$(wheelsHost):/opt/wheels \
