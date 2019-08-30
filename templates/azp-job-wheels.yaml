@@ -2,7 +2,8 @@
 
 parameters:
   builderVersion: ''
-  builderApk: ''
+  builderApk: 'build-base'
+  builderPip: 'Cython'
   builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
   wheelsRequirement: ''
   wheelsRequirementDiff: ''
