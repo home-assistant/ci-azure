@@ -39,8 +39,10 @@ stages:
     strategy:
       matrix:
         Python36:
-          pythonVersion: '3.6'
+          tagVersion: '3.6'
+          pythonVersion: '3.6.1'
         Python37:
+          tagVersion: '3.7'
           pythonVersion: '3.7'
     steps:
     - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
@@ -50,6 +52,6 @@ stages:
 
         sudo docker build \
           --build-arg PYTHON_VERSION=$(pythonVersion) \
-          --tag homeassistant/ci-azure:$(pythonVersion) .
+          --tag homeassistant/ci-azure:$(tagVersion) .
 
-        sudo docker push homeassistant/ci-azure:$(pythonVersion)
+        sudo docker push homeassistant/ci-azure:$(tagVersion)
