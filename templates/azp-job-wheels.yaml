@@ -2,7 +2,8 @@
 
 parameters:
   builderVersion: ''
-  builderApk: ''
+  builderApk: 'build-base'
+  builderPip: 'Cython'
   builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
   builderPath: ''
   wheelsRequirement: ''
@@ -81,6 +82,7 @@ jobs:
       sudo docker run --rm -v "$data_path:/data:ro" -v "$(pwd)/.ssh:/root/.ssh:rw" \
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
         --apk "${{ parameters.builderApk }}" \
+        --pip "${{ parameters.builderPip }}" \
         --index $(wheelsIndex) \
         --upload rsync \
         --remote wheels@$(wheelsHost):/opt/wheels \

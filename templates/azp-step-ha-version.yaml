@@ -15,7 +15,9 @@ steps:
     branch_version="$(Build.SourceBranchName)"
 
     if [ "${branch_version}" == "dev" ]; then
-      ./script/version_bump.py nightly
+      python3 -m pip install packaging
+      python3 -m pip install .
+      python3 script/version_bump.py nightly
     fi
 
     echo '##vso[task.setvariable variable=homeassistantRelease]$(python setup.py -V)'
