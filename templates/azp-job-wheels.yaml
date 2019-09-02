@@ -6,6 +6,7 @@ parameters:
   builderPip: 'Cython'
   builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
   builderPath: ''
+  builderEnv: {}
   wheelsRequirement: ''
   wheelsRequirementDiff: ''
   wheelsPrebuildDir: ''
@@ -79,12 +80,19 @@ jobs:
         build_args+=(--local)
       fi
 
-      sudo docker run --rm -v "$data_path:/data:ro" -v "$(pwd)/.ssh:/root/.ssh:rw" \
+      env > .env_file
+
+      sudo docker run --rm \
+        -v "$data_path:/data:ro" \
+        -v "$(pwd)/.ssh:/root/.ssh:rw" \
+        --env-file .env_file
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
-        --apk "${{ parameters.builderApk }}" \
-        --pip "${{ parameters.builderPip }}" \
-        --index $(wheelsIndex) \
-        --upload rsync \
-        --remote wheels@$(wheelsHost):/opt/wheels \
-        "${build_args[@]}"
+          --apk "${{ parameters.builderApk }}" \
+          --pip "${{ parameters.builderPip }}" \
+          --index $(wheelsIndex) \
+          --upload rsync \
+          --remote wheels@$(wheelsHost):/opt/wheels \
+          "${build_args[@]}"
     displayName: 'Run wheels build'
+    env:
+      ${{ insert }}: ${{ parameters.builderEnv }}
