@@ -4,6 +4,7 @@ parameters:
   builderVersion: ''
   builderApk: ''
   builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
+  builderPath: ''
   wheelsRequirement: ''
   wheelsRequirementDiff: ''
   wheelsPrebuildDir: ''
@@ -51,6 +52,12 @@ jobs:
   - script: |
       build_args=()
 
+      if [ -n "${{ parameters.builderPath }}" ]; then
+        data_path="$(pwd)/${{ parameters.builderPath }}"
+      else
+        data_path="$(pwd)"
+      fi
+
       if [ -f "${{ parameters.wheelsRequirement }}" ]; then
         build_args+=(--requirement "${{ parameters.wheelsRequirement }}")
       fi
@@ -71,7 +78,7 @@ jobs:
         build_args+=(--local)
       fi
 
-      sudo docker run --rm -v $(pwd):/data:ro -v $(pwd)/.ssh:/root/.ssh:rw \
+      sudo docker run --rm -v "$data_path:/data:ro" -v "$(pwd)/.ssh:/root/.ssh:rw" \
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
         --apk "${{ parameters.builderApk }}" \
         --index $(wheelsIndex) \
