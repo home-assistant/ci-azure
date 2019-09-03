@@ -1,0 +1,14 @@
+# https://dev.azure.com/home-assistant
+
+parameters:
+  name: 'HomeAssistant Azure'
+  email: 'helo@home-assistant.io'
+
+steps:
+- checkout: self
+  persistCredentials: true
+  clean: true
+- script: |
+    git config --global user.name "${{ parameters.name }}"
+    git config --global user.email "${{ parameters.email }}"
+  displayName: 'Setup GIT'
