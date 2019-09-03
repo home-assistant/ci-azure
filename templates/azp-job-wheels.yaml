@@ -6,7 +6,7 @@ parameters:
   builderPip: 'Cython'
   builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
   builderPath: ''
-  builderEnv: ''
+  builderEnvFile: false
   wheelsRequirement: ''
   wheelsRequirementDiff: ''
   wheelsPrebuildDir: ''
@@ -63,9 +63,9 @@ jobs:
       fi
 
       # Environment
-      for env_var in ${{ parameters.builderEnv }}; do
-        docker_args+=(-e $env_var)
-      done
+      if [ "${{ parameters.builderEnvFile }}" == "true" ] && [ -f .env_file ]; then
+        docker_args+=(--env-file .env_file)
+      fi
 
       if [ -f "${{ parameters.wheelsRequirement }}" ]; then
         build_args+=(--requirement "${{ parameters.wheelsRequirement }}")
