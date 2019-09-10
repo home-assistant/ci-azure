@@ -2,7 +2,7 @@
 
 parameters:
   name: 'HomeAssistant Azure'
-  email: 'helo@home-assistant.io'
+  email: 'hello@home-assistant.io'
 
 steps:
 - checkout: self
