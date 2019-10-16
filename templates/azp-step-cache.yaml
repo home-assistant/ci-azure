@@ -25,8 +25,3 @@ steps:
     tar -xzf $(Pipeline.Workspace)/venv.tar.gz
   displayName: 'Restore Virtual Environment'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'true'))
-- script: |
-    . venv/bin/activate
-
-    pip install -e .
-  displayName: 'Install Project'
