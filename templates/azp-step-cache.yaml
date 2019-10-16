@@ -12,7 +12,7 @@ steps:
   displayName: 'Set python version for requirement cache'
 - task: CacheBeta@0
   inputs:
-    key: ${{ parameters.keyfile }} | $(pythonCacheVersion)
+    key: ${{ parameters.keyfile }} | "$(pythonCacheVersion)"
     path: $(Pipeline.Workspace)/venv.tar.gz
     cacheHitVar: CacheRestored
 - script: |
