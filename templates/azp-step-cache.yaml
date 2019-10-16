@@ -13,16 +13,16 @@ steps:
 - task: CacheBeta@0
   inputs:
     key: ${{ parameters.keyfile }} | "$(pythonCacheVersion)"
-    path: $(Pipeline.Workspace)/venv.tar.gz
+    path: $(Pipeline.Workspace)/venv
     cacheHitVar: CacheRestored
 - script: |
     ${{ parameters.build }}
 
-    tar -czf $(Pipeline.Workspace)/venv.tar.gz venv
+    mkdir -p $(Pipeline.Workspace)/venv
+    tar -czf $(Pipeline.Workspace)/venv/venv.tar.gz venv
   displayName: 'Create Virtual Environment & Install Requirements'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'false'))
 - script: |
-    ls -lsR $(Pipeline.Workspace)
-    tar -xzf $(Pipeline.Workspace)/venv.tar.gz
+    tar -xzf $(Pipeline.Workspace)/venv/venv.tar.gz
   displayName: 'Restore Virtual Environment'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'true'))
