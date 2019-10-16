@@ -1,35 +1,32 @@
 # https://dev.azure.com/home-assistant
+# Explicit Cache Save: Dont wait with cache save for all the other task in this job to complete (±30 minutes), other parallel jobs might utilize this
 
 parameters:
-  artifactFeed: '2df3ae11-3bf6-49bc-a809-ba0d340d6a6d'
   keyfile: ''
   build: ''
 
 
 steps:
 - script: |
-    python --version > .cache
+    echo "##vso[task.setvariable variable=pythonCacheVersion]$(python --version)"
   displayName: 'Set python version for requirement cache'
-- task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-  displayName: 'Restore artifacts based on Requirements'
+- task: CacheBeta@0
   inputs:
-    keyfile: '${{ parameters.keyfile }}'
-    targetfolder: './venv'
-    vstsFeed: '${{ parameters.artifactFeed }}'
+    key: ${{ parameters.keyfile }} | $(pythonCacheVersion)
+    path: $(Pipeline.Workspace)/venv.tar.gz
+    cacheHitVar: CacheRestored
 - script: |
     ${{ parameters.build }}
+
+    tar -czf $(Pipeline.Workspace)/venv.tar.gz venv
   displayName: 'Create Virtual Environment & Install Requirements'
-  condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
-# Explicit Cache Save (instead of using RestoreAndSaveCache)
-# Dont wait with cache save for all the other task in this job to complete (±30 minutes), other parallel jobs might utilize this
-- task: 1ESLighthouseEng.PipelineArtifactCaching.SaveCacheV1.SaveCache@1
-  displayName: 'Save artifacts based on Requirements'
-  inputs:
-    keyfile: '${{ parameters.keyfile }}'
-    targetfolder: './venv'
-    vstsFeed: '${{ parameters.artifactFeed }}'
+  condition: and(succeeded(), eq(variables['CacheRestored'], 'false'))
+- script: |
+    tar -xzf $(Pipeline.Workspace)/venv.tar.gz
+  displayName: 'Restore Virtual Environment'
+  condition: and(succeeded(), eq(variables['CacheRestored'], 'true'))
 - script: |
     . venv/bin/activate
 
     pip install -e .
-  displayName: 'Install Home Assistant'
+  displayName: 'Install Project'
