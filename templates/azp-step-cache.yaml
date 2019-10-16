@@ -22,6 +22,7 @@ steps:
   displayName: 'Create Virtual Environment & Install Requirements'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'false'))
 - script: |
+    ls -ls $(Pipeline.Workspace)
     tar -xzf $(Pipeline.Workspace)/venv.tar.gz
   displayName: 'Restore Virtual Environment'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'true'))
