@@ -18,11 +18,11 @@ steps:
 - script: |
     ${{ parameters.build }}
 
-    mkdir -p $(Pipeline.Workspace)/venv
-    tar -czf $(Pipeline.Workspace)/venv/venv.tar.gz venv
+    mkdir $(Pipeline.Workspace)/venv
+    tar -czf $(Pipeline.Workspace)/venv/homeassistant.tar.gz venv
   displayName: 'Create Virtual Environment & Install Requirements'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'false'))
 - script: |
-    tar -xzf $(Pipeline.Workspace)/venv/venv.tar.gz
+    tar -xzf $(Pipeline.Workspace)/venv/homeassistant.tar.gz
   displayName: 'Restore Virtual Environment'
   condition: and(succeeded(), eq(variables['CacheRestored'], 'true'))
