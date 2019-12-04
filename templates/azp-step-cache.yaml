@@ -10,7 +10,7 @@ steps:
 - script: |
     echo "##vso[task.setvariable variable=pythonCacheVersion]$(python --version)"
   displayName: 'Set python version for requirement cache'
-- task: CacheBeta@0
+- task: Cache@2
   inputs:
     key: ${{ parameters.keyfile }} | "$(pythonCacheVersion)"
     path: $(Pipeline.Workspace)/venv
