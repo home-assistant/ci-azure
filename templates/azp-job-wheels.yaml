@@ -124,6 +124,7 @@ jobs:
       fi
 
       # Create container
+      echo "Create container: ${container_id}"
       docker create --name ${container_id} -t \
         "${docker_args[@]}" \
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
