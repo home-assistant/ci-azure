@@ -19,17 +19,19 @@ parameters:
   - aarch64
 - name: builderPath
   type: string
+  default: ''
 - name: builderEnvFile
   type: boolean
   default: false
 - name: wheelsRequirement
   type: string
+  default: ''
 - name: wheelsRequirementDiff
   type: string
-- name: wheelsRequirementDiff
-  type: string
+  default: ''
 - name: wheelsPrebuildDir
   type: string
+  default: ''
 - name: wheelsSingle
   type: boolean
   default: false
@@ -38,6 +40,8 @@ parameters:
   default: false
 - name: preBuild
   type: step
+  default:
+    script: echo "No step given"
 - name: jobName
   type: string
   default: 'Wheels'
