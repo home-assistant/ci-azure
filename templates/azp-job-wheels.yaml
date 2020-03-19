@@ -67,7 +67,7 @@ jobs:
   pool:
     name: BuildCluster
     demands:
-    - Agent.OSArchitecture -equals $[ variables['agentArch'] ]
+    - Agent.OSArchitecture -equals ${{ agentArch }}
   variables:
   - group: wheels
 
