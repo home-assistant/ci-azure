@@ -14,33 +14,24 @@ parameters:
   wheelsLocal: false
   preBuild: []
   jobName: 'Wheels'
-  buildPool:
-    vmImage: 'ubuntu-latest'
-
 
 jobs:
 - job: '${{ parameters.jobName }}'
   timeoutInMinutes: 360
-  pool: ${{ parameters.buildPool }}
-  variables:
-  - group: wheels
   strategy:
     matrix:
       ${{ each arch in parameters.builderArch }}:
         ${{ arch }}:
           buildArch: ${{ arch }}
+          agentArch: 
+  pool:
+    name: BuildCluster
+    demands:
+    - Agent.OSArchitecture -equals $[ variables['agentArch'] ]
+  variables:
+  - group: wheels
+
   steps:
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y --no-install-recommends \
-        qemu-user-static \
-        binfmt-support \
-        curl \
-        jq
-      sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-      sudo update-binfmts --enable qemu-arm
-      sudo update-binfmts --enable qemu-aarch64
-    displayName: 'Initial cross build'
   - script: |
       mkdir -p .ssh
       echo -e "-----BEGIN RSA PRIVATE KEY-----\n$(wheelsSSH)\n-----END RSA PRIVATE KEY-----" >> .ssh/id_rsa
