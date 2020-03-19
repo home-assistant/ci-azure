@@ -140,7 +140,7 @@ jobs:
       done
 
       # Inject SSH files
-      docker cp -a .ssh/. ${container_id}:/root/.ssh
+      docker cp -a .ssh/ ${container_id}:/root/.ssh
 
       # Create wheels
       docker start -a ${container_id}
