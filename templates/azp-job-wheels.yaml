@@ -85,6 +85,7 @@ jobs:
   - script: |
       build_args=()
       docker_args=()
+      container_id="$(Build.SourceVersion)-$(buildArch)"
 
       # Data Path
       if [ -n "${{ parameters.builderPath }}" ]; then
@@ -118,9 +119,7 @@ jobs:
         build_args+=(--local)
       fi
 
-      docker run --rm \
-        -v "$data_path:/data:ro" \
-        -v "$(pwd)/.ssh:/root/.ssh:rw" \
+      docker create --name ${container_id} -t \
         "${docker_args[@]}" \
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
           --apk "${{ parameters.builderApk }}" \
@@ -129,4 +128,13 @@ jobs:
           --upload rsync \
           --remote wheels@$(wheelsHost):/opt/wheels \
           "${build_args[@]}"
+      
+      docker cp * ${container_id}:/data/
+      docker cp .ssh/ ${container_id}:/root/
+
+      docker start -a ${container_id}
     displayName: 'Run wheels build'
+  - script: |
+      docker rm -f "$(Build.SourceVersion)-$(buildArch)"
+    displayName: 'Cleanup wheels build'
+    condition: always()
