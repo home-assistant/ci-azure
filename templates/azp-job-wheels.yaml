@@ -138,7 +138,9 @@ jobs:
       for data_cp in "${docker_data[@]}"; do
         docker cp ${data_cp} ${container_id}:/data/
       done
-      docker cp .ssh ${container_id}:/root/
+
+      # Inject SSH files
+      docker cp -a .ssh/. ${container_id}:/root/.ssh
 
       # Create wheels
       docker start -a ${container_id}
