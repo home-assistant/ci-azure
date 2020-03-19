@@ -55,9 +55,9 @@ jobs:
         ${{ arch }}:
           buildArch: ${{ arch }}
           ${{ if eq(arch, 'amd64') }}:
-            agentArch: X86
+            agentArch: X64
           ${{ if eq(arch, 'i386') }}:
-            agentArch: X86
+            agentArch: X64
           ${{ if eq(arch, 'armhf') }}:
             agentArch: ARM
           ${{ if eq(arch, 'armv7') }}:
@@ -79,7 +79,7 @@ jobs:
       chmod 600 .ssh/*
     displayName: 'Install ssh key'
   - script: |
-      sudo docker pull homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }}
+      docker pull homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }}
     displayName: 'Install wheels builder'
   - ${{ parameters.preBuild }}
   - script: |
@@ -118,7 +118,7 @@ jobs:
         build_args+=(--local)
       fi
 
-      sudo docker run --rm \
+      docker run --rm \
         -v "$data_path:/data:ro" \
         -v "$(pwd)/.ssh:/root/.ssh:rw" \
         "${docker_args[@]}" \
