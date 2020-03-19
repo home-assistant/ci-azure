@@ -39,7 +39,7 @@ parameters:
   type: boolean
   default: false
 - name: preBuild
-  type: step
+  type: stepList
   default: []
 - name: jobName
   type: string
