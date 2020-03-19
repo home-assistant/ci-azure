@@ -1,46 +1,74 @@
 # https://dev.azure.com/home-assistant
 
 parameters:
-  builderVersion: ''
-  builderApk: 'build-base'
-  builderPip: 'Cython'
-  builderArch: ['amd64', 'i386', 'armhf', 'armv7', 'aarch64']
-  builderPath: ''
-  builderEnvFile: false
-  wheelsRequirement: ''
-  wheelsRequirementDiff: ''
-  wheelsPrebuildDir: ''
-  wheelsSingle: false
-  wheelsLocal: false
-  preBuild: []
-  jobName: 'Wheels'
-  buildPool:
-    vmImage: 'ubuntu-latest'
+- name: builderVersion
+  type: string
+- name: builderApk
+  type: string
+  default: 'build-base'
+- name: builderPip
+  type: string
+  default: 'Cython'
+- name: builderArch
+  type: object
+  default:
+  - amd64
+  - i386
+  - armhf
+  - armv7
+  - aarch64
+- name: builderPath
+  type: string
+- name: builderEnvFile
+  type: boolean
+  default: false
+- name: wheelsRequirement
+  type: string
+- name: wheelsRequirementDiff
+  type: string
+- name: wheelsRequirementDiff
+  type: string
+- name: wheelsPrebuildDir
+  type: string
+- name: wheelsSingle
+  type: boolean
+  default: false
+- name: wheelsLocal
+  type: boolean
+  default: false
+- name: preBuild
+  type: step
+- name: jobName
+  type: string
+  default: 'Wheels'
 
 
 jobs:
 - job: '${{ parameters.jobName }}'
   timeoutInMinutes: 360
-  pool: ${{ parameters.buildPool }}
-  variables:
-  - group: wheels
   strategy:
     matrix:
       ${{ each arch in parameters.builderArch }}:
         ${{ arch }}:
           buildArch: ${{ arch }}
+          ${{ if eq(arch, 'amd64') }}:
+            agentArch: X86
+          ${{ if eq(arch, 'i386') }}:
+            agentArch: X86
+          ${{ if eq(arch, 'armhf') }}:
+            agentArch: ARM
+          ${{ if eq(arch, 'armv7') }}:
+            agentArch: ARM
+          ${{ if eq(arch, 'aarch64') }}:
+            agentArch: ARM
+  pool:
+    name: BuildCluster
+    demands:
+    - Agent.OSArchitecture -equals $[ variables['agentArch'] ]
+  variables:
+  - group: wheels
+
   steps:
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y --no-install-recommends \
-        qemu-user-static \
-        binfmt-support \
-        curl \
-        jq
-      sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-      sudo update-binfmts --enable qemu-arm
-      sudo update-binfmts --enable qemu-aarch64
-    displayName: 'Initial cross build'
   - script: |
       mkdir -p .ssh
       echo -e "-----BEGIN RSA PRIVATE KEY-----\n$(wheelsSSH)\n-----END RSA PRIVATE KEY-----" >> .ssh/id_rsa
