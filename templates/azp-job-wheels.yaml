@@ -85,6 +85,7 @@ jobs:
   - script: |
       build_args=()
       docker_args=()
+      docker_data=()
       container_id="$(Build.SourceVersion)-$(buildArch)"
 
       # Data Path
@@ -101,14 +102,17 @@ jobs:
 
       if [ -f "${{ parameters.wheelsRequirement }}" ]; then
         build_args+=(--requirement "${{ parameters.wheelsRequirement }}")
+        docker_data+=("${{ parameters.wheelsRequirement }}")
       fi
 
       if [ -f "${{ parameters.wheelsRequirementDiff }}" ]; then
         build_args+=(--requirement-diff "${{ parameters.wheelsRequirementDiff }}")
+        docker_data+=("${{ parameters.wheelsRequirementDiff }}")
       fi
 
       if [ -d "${{ parameters.wheelsPrebuildDir }}" ]; then
         build_args+=(--prebuild-dir "${{ parameters.wheelsPrebuildDir }}")
+        docker_data+=("${{ parameters.wheelsPrebuildDir }}")
       fi
 
       if [ "${{ parameters.wheelsSingle }}" == "true" ]; then
@@ -119,6 +123,7 @@ jobs:
         build_args+=(--local)
       fi
 
+      # Create container
       docker create --name ${container_id} -t \
         "${docker_args[@]}" \
         homeassistant/$(buildArch)-wheels:${{ parameters.builderVersion }} \
@@ -128,10 +133,14 @@ jobs:
           --upload rsync \
           --remote wheels@$(wheelsHost):/opt/wheels \
           "${build_args[@]}"
-      
-      docker cp * ${container_id}:/data/
-      docker cp .ssh/ ${container_id}:/root/
 
+      # Copy file in 
+      for data_cp in "${docker_data[@]}"; do
+        docker cp ${data_cp} ${container_id}:/data/
+      done
+      docker cp .ssh ${container_id}:/root/
+
+      # Create wheels
       docker start -a ${container_id}
     displayName: 'Run wheels build'
   - script: |
