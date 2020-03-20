@@ -101,12 +101,12 @@ jobs:
       fi
 
       if [ -f "${{ parameters.wheelsRequirement }}" ]; then
-        build_args+=(--requirement "${{ parameters.wheelsRequirement }}")
+        build_args+=(--requirement "$(basename ${{ parameters.wheelsRequirement }})")
         docker_data+=("${{ parameters.wheelsRequirement }}")
       fi
 
       if [ -f "${{ parameters.wheelsRequirementDiff }}" ]; then
-        build_args+=(--requirement-diff "${{ parameters.wheelsRequirementDiff }}")
+        build_args+=(--requirement-diff "$(basename ${{ parameters.wheelsRequirementDiff }})")
         docker_data+=("${{ parameters.wheelsRequirementDiff }}")
       fi
 
