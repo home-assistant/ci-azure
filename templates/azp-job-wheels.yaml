@@ -83,10 +83,9 @@ jobs:
     displayName: 'Install wheels builder'
   - ${{ parameters.preBuild }}
   - script: |
+      container_id="${{ parameters.jobName }}-$(Build.BuildId)-$(Build.BuildNumber)-$(buildArch)"
       build_args=()
       docker_args=()
-      docker_data=()
-      container_id="${{ parameters.jobName }}-$(Build.BuildId)-$(Build.BuildNumber)-$(buildArch)"
 
       # Data Path
       if [ -n "${{ parameters.builderPath }}" ]; then
@@ -96,7 +95,7 @@ jobs:
       fi
 
       # Environment
-      if [ "${{ parameters.builderEnvFile }}" == "true" ] && [ -f .env_file ]; then
+      if [ "${{ parameters.builderEnvFile }}" == "True" ] && [ -f .env_file ]; then
         docker_args+=(--env-file .env_file)
       fi
 
@@ -112,11 +111,11 @@ jobs:
         build_args+=(--prebuild-dir "${{ parameters.wheelsPrebuildDir }}")
       fi
 
-      if [ "${{ parameters.wheelsSingle }}" == "true" ]; then
+      if [ "${{ parameters.wheelsSingle }}" == "True" ]; then
         build_args+=(--single)
       fi
 
-      if [ "${{ parameters.wheelsLocal }}" == "true" ]; then
+      if [ "${{ parameters.wheelsLocal }}" == "True" ]; then
         build_args+=(--local)
       fi
 
