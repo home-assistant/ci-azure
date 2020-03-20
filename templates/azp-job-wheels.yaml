@@ -86,7 +86,7 @@ jobs:
       build_args=()
       docker_args=()
       docker_data=()
-      container_id="${{ parameters.jobName }}-$(Build.BuildNumber)-$(buildArch)"
+      container_id="${{ parameters.jobName }}-$(Build.BuildId)-$(Build.BuildNumber)-$(buildArch)"
 
       # Data Path
       if [ -n "${{ parameters.builderPath }}" ]; then
@@ -147,6 +147,6 @@ jobs:
       docker start -a ${container_id}
     displayName: 'Run wheels build'
   - script: |
-      docker rm -f "${{ parameters.jobName }}-$(Build.BuildNumber)-$(buildArch)"
+      docker rm -f "${{ parameters.jobName }}-$(Build.BuildId)-$(Build.BuildNumber)-$(buildArch)"
     displayName: 'Cleanup wheels build'
     condition: always()
