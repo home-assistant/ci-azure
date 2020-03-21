@@ -132,7 +132,7 @@ jobs:
           "${build_args[@]}"
 
       # Copy file in & Inject SSH files
-      docker cp -a "${data_path}" "${container_id}:/data"
+      docker cp -a -L "${data_path}/." "${container_id}:/data/"
       docker cp -a .ssh/ "${container_id}:/root/.ssh"
 
       # Create wheels
