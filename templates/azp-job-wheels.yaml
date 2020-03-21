@@ -134,6 +134,11 @@ jobs:
       # Copy file in & Inject SSH files
       docker cp -a -L "${data_path}/." "${container_id}:/data/"
       docker cp -a .ssh/ "${container_id}:/root/.ssh"
+      
+      # Copy .git if needed
+      if [ -n "${{ parameters.builderPath }}" ] && [ -d "${data_path}/.git" ]; then
+        docker cp -a -L "${data_path}/.git" "${container_id}:/data/.git"
+      fi
 
       # Create wheels
       docker start -a "${container_id}"
