@@ -44,7 +44,9 @@ parameters:
 - name: jobName
   type: string
   default: 'Wheels'
-
+- name: skipBinary
+  type: string
+  default: ''
 
 jobs:
 - job: '${{ parameters.jobName }}'
@@ -117,6 +119,10 @@ jobs:
 
       if [ "${{ parameters.wheelsLocal }}" == "True" ]; then
         build_args+=(--local)
+      fi
+
+      if [ -n "${{ parameters.skipBinary }}" ]; then
+        build_args+=(--skip-binary "${{ parameters.skipBinary }}")
       fi
 
       # Create container
