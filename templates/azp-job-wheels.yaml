@@ -132,8 +132,7 @@ jobs:
           "${build_args[@]}"
 
       # Copy file in & Inject SSH files
-      tar -pcf - -C $(dirname ${data_path}) $(basename ${data_path}) | docker cp - "${container_id}:/data/"
-      docker exec ${container_id} ls /data/
+      tar -pcf - -C $(dirname ${data_path}) $(basename ${data_path}) | docker cp - "${container_id}:/data"
       docker cp -a .ssh/ "${container_id}:/root/.ssh"
       
       # Create wheels
