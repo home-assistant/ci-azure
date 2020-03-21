@@ -1,8 +1,15 @@
 # https://dev.azure.com/home-assistant
 
 parameters:
-  ignoreDev: false
-  pythonVersion: '3.7'
+  - name: ignoreDev
+    type: boolean
+    default: false
+  - name: ignoreMaster
+    type: boolean
+    default: false
+  - name: pythonVersion
+    type: string
+    default: '3.7'
 
 jobs:
 - job: 'VersionValidate'
@@ -17,7 +24,9 @@ jobs:
       setup_version="$(python setup.py -V)"
       branch_version="$(Build.SourceBranchName)"
 
-      if [ "${{ parameters.ignoreDev }}" == "true" ] && [ "${branch_version}" == "dev" ]; then
+      if [ "${{ parameters.ignoreDev }}" == "True" ] && [ "${branch_version}" == "dev" ]; then
+        exit 0
+      elif [ "${{ parameters.ignoreMaster }}" == "True" ] && [ "${branch_version}" == "master" ]; then
         exit 0
       elif [ "${setup_version}" != "${branch_version}" ]; then
         echo "Version of tag ${branch_version} don't match with ${setup_version}!"
