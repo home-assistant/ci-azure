@@ -50,7 +50,7 @@ parameters:
 
 jobs:
 - job: '${{ parameters.jobName }}'
-  timeoutInMinutes: 360
+  timeoutInMinutes: 0
   strategy:
     matrix:
       ${{ each arch in parameters.builderArch }}:
