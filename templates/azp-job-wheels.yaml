@@ -58,14 +58,19 @@ jobs:
           buildArch: ${{ arch }}
           ${{ if eq(arch, 'amd64') }}:
             agentArch: X64
+            targetArch: x86_64
           ${{ if eq(arch, 'i386') }}:
             agentArch: X64
+            targetArch: i686
           ${{ if eq(arch, 'armhf') }}:
             agentArch: ARM
+            targetArch: arm
           ${{ if eq(arch, 'armv7') }}:
             agentArch: ARM
+            targetArch: arm
           ${{ if eq(arch, 'aarch64') }}:
             agentArch: ARM
+            targetArch: arm64
   pool:
     name: BuildCluster
     demands:
@@ -87,7 +92,7 @@ jobs:
   - script: |
       container_id="${{ parameters.jobName }}-$(Build.BuildId)-$(Build.BuildNumber)-$(buildArch)"
       build_args=()
-      docker_args=()
+      docker_args=(-e "ARCH=$(targetArch)")
 
       # Data Path
       if [ -n "${{ parameters.builderPath }}" ]; then
