@@ -29,6 +29,9 @@ parameters:
 - name: wheelsRequirementDiff
   type: string
   default: ''
+- name: wheelsConstraint
+  type: string
+  default: ''
 - name: wheelsPrebuildDir
   type: string
   default: ''
@@ -107,6 +110,10 @@ jobs:
 
       if [ -f "${{ parameters.wheelsRequirementDiff }}" ]; then
         build_args+=(--requirement-diff "${{ parameters.wheelsRequirementDiff }}")
+      fi
+
+      if [ -f "${{ parameters.wheelsConstraint }}" ]; then
+        build_args+=(--constraint "${{ parameters.wheelsConstraint }}")
       fi
 
       if [ -d "${{ parameters.wheelsPrebuildDir }}" ]; then
