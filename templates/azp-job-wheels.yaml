@@ -50,10 +50,13 @@ parameters:
 - name: skipBinary
   type: string
   default: ''
+- name: timeoutJob
+  type: number
+  default: 480
 
 jobs:
 - job: '${{ parameters.jobName }}'
-  timeoutInMinutes: 0
+  timeoutInMinutes: ${{ parameters.timeoutJob }}
   strategy:
     matrix:
       ${{ each arch in parameters.builderArch }}:
