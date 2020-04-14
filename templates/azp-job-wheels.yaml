@@ -61,7 +61,7 @@ jobs:
     matrix:
       ${{ each arch in parameters.builderArch }}:
         ${{ arch }}:
-          buildArch: ${{ arch }}
+          buildArch: amd64
           ${{ if eq(arch, 'amd64') }}:
             agentArch: X64
           ${{ if eq(arch, 'i386') }}:
@@ -73,9 +73,10 @@ jobs:
           ${{ if eq(arch, 'aarch64') }}:
             agentArch: ARM
   pool:
-    name: BuildCluster
-    demands:
-    - Agent.OSArchitecture -equals $(agentArch)
+    vmImage: 'ubuntu-latest'
+#    name: BuildCluster
+#    demands:
+#    - Agent.OSArchitecture -equals $(agentArch)
   variables:
   - group: wheels
 
