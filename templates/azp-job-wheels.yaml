@@ -61,7 +61,7 @@ jobs:
     matrix:
       ${{ each arch in parameters.builderArch }}:
         ${{ arch }}:
-          buildArch: amd64
+          buildArch: ${{ arch }}
           ${{ if eq(arch, 'amd64') }}:
             agentArch: X64
           ${{ if eq(arch, 'i386') }}:
