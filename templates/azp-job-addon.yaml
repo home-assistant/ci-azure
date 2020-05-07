@@ -3,7 +3,7 @@
 parameters:
 - name: addon
   type: string
-- name: builderArch
+- name: arch
   type: object
   default:
   - amd64
@@ -23,7 +23,7 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      ${{ each arch in parameters.builderArch }}:
+      ${{ each arch in parameters.arch }}:
         ${{ arch }}:
           buildArch: ${{ arch }}
   timeoutInMinutes: 360
