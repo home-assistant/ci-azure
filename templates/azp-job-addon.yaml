@@ -30,7 +30,7 @@ jobs:
   steps:
   - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
     displayName: 'Docker hub login'
-  - script: sudo docker pull homeassistant/amd64-builder:$(versionBuilder)
+  - script: sudo docker pull homeassistant/amd64-builder:${{ parameters.versionBuilder }}
     displayName: 'Install Builder'
   - script: |
       sudo docker run --rm --privileged \
