@@ -39,6 +39,8 @@ stages:
           pythonVersion: '3.7'
         Python38:
           pythonVersion: '3.8'
+        Python39:
+          pythonVersion: '3.9'
     steps:
     - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
       displayName: 'Docker hub login'
