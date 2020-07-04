@@ -46,7 +46,6 @@ stages:
         set -e
 
         sudo docker build \
-          --build-arg PYTHON_VERSION=$(pythonVersion) \
           --tag homeassistant/ci-azure:$(pythonVersion) \
           -f python/Dockerfile-$(pythonVersion) \
           python
