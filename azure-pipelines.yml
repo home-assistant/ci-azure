@@ -16,7 +16,7 @@ schedules:
   always: true
 variables:
   - name: versionHadolint
-    value: 'v1.17.2'
+    value: 'v1.18.0'
   - group: docker
 
 stages:
