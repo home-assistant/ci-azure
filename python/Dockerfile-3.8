@@ -1,6 +1,6 @@
-FROM buildpack-deps:18.04
+FROM buildpack-deps:buster
 
-# ensure local python is preferred over distribution python
+# Ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -12,22 +12,17 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup requirements
 RUN \
-	apt-get update && apt-get install -y --no-install-recommends \
-		software-properties-common \
-    && add-apt-repository ppa:jonathonf/ffmpeg-4 \
-	&& apt-get update && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        netbase \
-        libudev-dev \
-        libavformat-dev \
-        libavcodec-dev \
-        libavdevice-dev \
-        libavutil-dev \
-        libswscale-dev \
-        libswresample-dev \
-        libavfilter-dev \
-		gnupg2 \
-	&& rm -rf /var/lib/apt/lists/*
+  apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavfilter-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libswresample-dev \
+    libswscale-dev \
+    libudev-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
 ENV PYTHON_VERSION 3.8.2
