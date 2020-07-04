@@ -16,7 +16,7 @@ schedules:
   always: true
 variables:
   - name: versionHadolint
-    value: 'v1.17.2'
+    value: 'v1.18.0'
   - group: docker
 
 stages:
@@ -39,6 +39,8 @@ stages:
           pythonVersion: '3.7'
         Python38:
           pythonVersion: '3.8'
+        Python39:
+          pythonVersion: '3.9'
     steps:
     - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
       displayName: 'Docker hub login'
@@ -46,7 +48,6 @@ stages:
         set -e
 
         sudo docker build \
-          --build-arg PYTHON_VERSION=$(pythonVersion) \
           --tag homeassistant/ci-azure:$(pythonVersion) \
           -f python/Dockerfile-$(pythonVersion) \
           python
