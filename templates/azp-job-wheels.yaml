@@ -53,6 +53,9 @@ parameters:
 - name: timeoutJob
   type: number
   default: 480
+- name: auditwheel
+  type: boolean
+  default: false
 
 jobs:
 - job: '${{ parameters.jobName }}'
@@ -141,6 +144,10 @@ jobs:
 
       if [ "${{ parameters.wheelsLocal }}" == "True" ]; then
         build_args+=(--local)
+      fi
+
+      if [ "${{ parameters.auditwheel }}" == "True" ]; then
+        build_args+=(--auditwheel)
       fi
 
       if [ -n "${{ parameters.skipBinary }}" ]; then
