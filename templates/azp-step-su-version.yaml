@@ -27,4 +27,4 @@ steps:
     else
       echo '##vso[task.setvariable variable=supervisorReleaseStable]true'
     fi
-  displayName: 'Check version & Bump on nightly'
+  displayName: 'Check version & Bump on dev'
