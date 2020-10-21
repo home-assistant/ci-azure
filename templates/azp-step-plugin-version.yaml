@@ -1,0 +1,25 @@
+# https://dev.azure.com/home-assistant
+
+
+steps:
+- script: |
+    set -e
+
+    branch_version="$(Build.SourceBranchName)"
+
+    if [[ "${branch_version}" == "master" ]] || [[ "${branch_version}" == "main" ]]; then
+      commit_count="$(git rev-list --count --since=yesterday HEAD)"
+      calver_date="$(date "+%Y.%m.dev%d")"
+      version="${calver_date}${commit_count}"
+    else
+      version="${branch_version}"
+    fi
+
+    echo "##vso[task.setvariable variable=pluginRelease]${version}"
+
+    if [[ "${branch_version}" == "master" ]] || [[ "${branch_version}" == "main" ]]; then
+      echo "##vso[task.setvariable variable=pluginReleaseStable]false"
+    else
+      echo "##vso[task.setvariable variable=pluginReleaseStable]true"
+    fi
+  displayName: 'Check version & Bump on main'
