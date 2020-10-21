@@ -1,14 +1,7 @@
 # https://dev.azure.com/home-assistant
 
-parameters:
-  pythonVersion: '3.7'
-
 
 steps:
-- task: UsePythonVersion@0
-  displayName: 'Use Python ${{ parameters.pythonVersion }}'
-  inputs:
-    versionSpec: '${{ parameters.pythonVersion }}'
 - script: |
     set -e
 
