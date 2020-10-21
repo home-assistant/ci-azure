@@ -1,0 +1,40 @@
+# https://dev.azure.com/home-assistant
+
+parameters:
+- name: commitName
+  type: string
+- name: jsonTag
+  type: string
+- name: buildVersion
+  type: string
+
+steps:
+  - script: |
+      sudo apt-get install -y --no-install-recommends \
+        git jq curl
+
+      git config --global user.name "Pascal Vizeli"
+      git config --global user.email "pvizeli@syshack.ch"
+      git config --global credential.helper store
+
+      echo "https://$(githubToken):x-oauth-basic@github.com" > $HOME/.git-credentials
+  - script: |
+      set -e
+
+      version="${{ parameters.buildVersion }}"
+
+      git clone https://github.com/home-assistant/hassio-version
+      cd hassio-version
+
+      dev_version="$(jq --raw-output '.${{ parameters.jsonTag }}' dev.json)"
+      beta_version="$(jq --raw-output '.${{ parameters.jsonTag }}' beta.json)"
+
+      if [[ "$version" =~ dev ]]; then
+        sed -i "s|\"${{ parameters.jsonTag }}\": \"$dev_version\"|\"${{ parameters.jsonTag }}\": \"$version\"|g" dev.json
+      else
+        sed -i "s|\"${{ parameters.jsonTag }}\": \"$beta_version\"|\"${{ parameters.jsonTag }}\": \"$version\"|g" beta.json
+      fi
+
+      git commit -am "Bump ${{ parameters.commitName }} $version"
+      git push
+    displayName: "Update version files"
