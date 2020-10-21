@@ -1,0 +1,28 @@
+# https://dev.azure.com/home-assistant
+
+parameters:
+- name: buildArch
+  type: string
+- name: buildVersion
+  type: string
+- name: builderArch
+  type: string
+  default: "amd64"
+- name: builderVersion
+  type: string
+  default: "7.2.0"
+
+steps:
+  - script: |
+      docker login -u $(dockerUser) -p $(dockerPassword)
+    displayName: "Docker hub login"
+  - script: docker pull homeassistant/${{ parameters.builderArch }}-builder:${{ parameters.builderVersion }}
+    displayName: "Install Builder"
+  - script: |
+      sudo docker run --rm --privileged \
+        -v ~/.docker:/root/.docker \
+        -v /run/docker.sock:/run/docker.sock:rw \
+        -v $(pwd):/data:ro \
+          homeassistant/${{ parameters.builderArch }}-builder:$(versionBuilder) \
+            --generic ${{ parameters.buildVersion }} "--${{ parameters.buildArch }}" -t /data
+    displayName: "Build Release"
