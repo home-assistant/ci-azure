@@ -8,7 +8,9 @@ steps:
     branch_version="$(Build.SourceBranchName)"
 
     if [[ "${branch_version}" == "dev" ]]; then
-      version="$(bash scripts/dev_version.sh)"
+      commit_count="$(git rev-list --count --since=yesterday HEAD)"
+      calver_date="$(date "+%Y.%m.dev%d")"
+      version="${calver_date}${commit_count}"
     else
       version="${branch_version}"
     fi
