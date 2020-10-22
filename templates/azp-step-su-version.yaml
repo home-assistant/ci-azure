@@ -10,6 +10,7 @@ steps:
     if [[ "${branch_version}" == "main" ]]; then
       commit_count="$(git rev-list --count --since=yesterday HEAD)"
       calver_date="$(date "+%Y.%m.dev%d")"
+      commit_count="$(printf "%02d" ${commit_count})"
       version="${calver_date}${commit_count}"
     else
       version="${branch_version}"
