@@ -35,8 +35,6 @@ stages:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-        Python37:
-          pythonVersion: '3.7'
         Python38:
           pythonVersion: '3.8'
         Python39:
