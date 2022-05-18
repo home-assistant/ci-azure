@@ -1,4 +1,4 @@
-FROM buildpack-deps:buster
+FROM buildpack-deps:bullseye
 
 # Ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -13,6 +13,9 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup requirements
 RUN \
   apt-get update && apt-get install -y --no-install-recommends \
+    cmake \
+    bluez \
+    iputils-ping \
     ffmpeg \
     libavcodec-dev \
     libavdevice-dev \
@@ -72,7 +75,7 @@ RUN cd /usr/local/bin \
   && ln -s python3-config python-config
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 20.2.4
+ENV PYTHON_PIP_VERSION 22.1
 
 RUN set -ex; \
   \

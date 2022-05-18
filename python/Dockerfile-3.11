@@ -1,4 +1,4 @@
-FROM buildpack-deps:buster
+FROM buildpack-deps:bullseye
 
 # Ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -13,6 +13,9 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup requirements
 RUN \
   apt-get update && apt-get install -y --no-install-recommends \
+    cmake \
+    bluez \
+    iputils-ping \
     ffmpeg \
     libavcodec-dev \
     libavdevice-dev \
@@ -24,8 +27,8 @@ RUN \
     libudev-dev \
   && rm -rf /var/lib/apt/lists/*
 
-ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
-ENV PYTHON_VERSION 3.8.2
+ENV GPG_KEY A035C8C19219BA821ECEA86B64E628F8D684696D
+ENV PYTHON_VERSION 3.11.0b1
 
 RUN set -ex \
   && wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
@@ -51,52 +54,6 @@ RUN set -ex \
     --with-system-ffi \
     --without-ensurepip \
   && make -j "$(nproc)" \
-# setting PROFILE_TASK makes "--enable-optimizations" reasonable: https://bugs.python.org/issue36044
-    PROFILE_TASK='-m test.regrtest --pgo \
-      test_asyncio \
-      test_asyncore \
-      test_array \
-      test_base64 \
-      test_binascii \
-      test_binop \
-      test_bisect \
-      test_bytes \
-      test_cmath \
-      test_codecs \
-      test_collections \
-      test_complex \
-      test_dataclasses \
-      test_datetime \
-      test_decimal \
-      test_difflib \
-      test_embed \
-      test_float \
-      test_fstring \
-      test_functools \
-      test_generators \
-      test_hashlib \
-      test_heapq \
-      test_int \
-      test_itertools \
-      test_json \
-      test_long \
-      test_math \
-      test_memoryview \
-      test_operator \
-      test_ordered_dict \
-      test_pickle \
-      test_pprint \
-      test_re \
-      test_set \
-      test_sqlite \
-      test_statistics \
-      test_struct \
-      test_tabnanny \
-      test_time \
-      test_unicode \
-      test_xml_etree \
-      test_xml_etree_c \
-    ' \
   && make install \
   && ldconfig \
   \
@@ -118,7 +75,7 @@ RUN cd /usr/local/bin \
   && ln -s python3-config python-config
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 20.2.4
+ENV PYTHON_PIP_VERSION 22.1
 
 RUN set -ex; \
   \

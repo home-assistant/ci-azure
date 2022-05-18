@@ -35,12 +35,12 @@ stages:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-        Python38:
-          pythonVersion: '3.8'
         Python39:
           pythonVersion: '3.9'
         Python310:
           pythonVersion: '3.10'
+        Python311:
+          pythonVersion: '3.11'
     steps:
     - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
       displayName: 'Docker hub login'
